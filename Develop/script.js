@@ -1,9 +1,11 @@
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
+var copyClick = document.querySelector("#password");
 
 // Write password to the #password input
 function writePassword() {
   //variables
+  var randomPassword = "";
   var lowercase = {
     isOn: false,
     charset: "abcdefghijklmnopqrstuvwxyz"
@@ -37,16 +39,16 @@ function writePassword() {
   //  get password length from user
   var passwordLength = 0;
   while((passwordLength < 8 || passwordLength > 128) || isNaN(passwordLength)) {
-     passwordLength = prompt("type a number between 8-128");
-     if((passwordLength < 8 || passwordLength > 128) || isNaN(passwordLength)) {
+    passwordLength = prompt("type a number between 8-128");
+    if((passwordLength < 8 || passwordLength > 128) || isNaN(passwordLength)) {
       alert("INVALID ENTRY");
-     }
+    }
   }
 
 
   //  puts atleast one random character in the password from the charsets and
   //  adds charset according to user input
-  var randomPassword= "";
+  
   var onCharset = "";
   if(lowercase.isOn){
     randomPassword += lowercase.charset[Math.floor(Math.random() * lowercase.charset.length)];
@@ -67,28 +69,29 @@ function writePassword() {
   console.log(onCharset);
 
   // generate rest of random password
-  var remainingLength = passwordLength - randomPassword.length;
+  var remainingLength = passwordLength - typecount;
   for (var i = 0; i < remainingLength; i++) {
     var rand = Math.floor(Math.random() * onCharset.length);
     randomPassword += onCharset.charAt(rand);
-    console.log(onCharset.charAt(rand));
-    console.log(rand);
   }
-  console.log(randomPassword);
   
-  //password scrambler
-  function scramblePass(str) {
-    var passwordSplit = str.split("");
-    for(var i = passwordSplit.length - 1; i > 0; i--) {
-      var randNum = Math.floor(Math.random() * (i + 1));
-      [passwordSplit[i], passwordSplit[randNum] = passwordSplit[randNum], passwordSplit[i]];
+  console.log(randomPassword);
+
+  String.prototype.scramble = function (){
+    var a = this.split("");
+    var n = a.length;
+    for(var i = (n-1); i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
     }
-    console.log(passwordSplit);
-    return passwordSplit.join("");
+    var x = a.join("");
+    return x;
   }
   
   function generatePassword() {
-    scramblePass(randomPassword);
+    randomPassword = randomPassword.scramble();
 
     return randomPassword;
   }
@@ -99,5 +102,11 @@ function writePassword() {
   passwordText.value = password;
 }
 
+// click generated password area to copy
+function copyPassword() {
+  navigator.clipboard.writeText(copyClick.value);
+}
+
 // Add event listener to generate button
 generateBtn.addEventListener("click", writePassword);
+copyClick.addEventListener("click", copyPassword)
